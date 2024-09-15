@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -10,10 +11,18 @@ import os
 
 # Chrome WebDriver options
 options = Options()
+options.add_argument("--disable-gpu")  # Disable GPU acceleration
+options.add_argument("--disable-extensions")  # Disable extensions for faster load
+options.add_argument("--no-sandbox")  # Not necessary, but may help in some cases
+options.add_argument("--disable-dev-shm-usage")  # Helps in environments with limited memory
+options.add_argument("--disable-features=NetworkService,NetworkServiceInProcess")  # Disables network service
+options.add_argument("--enable-fast-unload")  # Unload pages faster
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
 options.add_argument("--profile-directory=Default")
-options.add_argument("--user-data-dir=/var/tmp/new_chrome_user_data")  # New user data directory
-options.add_argument("--disable-extensions")  # Disable Chrome extensions
+options.add_argument("--user-data-dir=C:/temp/chrome_user_data")# New user data directory
+# options.add_argument("--headless")
+prefs = {"profile.managed_default_content_settings.images": 2}
+options.add_experimental_option("prefs", prefs)
 
 os.system("")
 os.environ["WDM_LOG_LEVEL"] = "0"
@@ -64,7 +73,8 @@ print(style.RED + 'We found ' + str(total_number) + ' contacts in the file' + st
 delay = 30
 
 # Initialize WebDriver
-driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+service = Service(ChromeDriverManager().install())
+driver = webdriver.Chrome(service=service, options=options)
 print('Once your browser opens up, sign in to WhatsApp Web')
 driver.get('https://web.whatsapp.com')
 input(style.MAGENTA + "AFTER logging into WhatsApp Web and your chats are visible, press ENTER..." + style.RESET)
